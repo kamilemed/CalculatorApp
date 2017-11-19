@@ -8,14 +8,6 @@
 
 import Foundation
 
-private func makeFlowtingNumber(op1: Double, op2: Double) -> Double {
-    var fraction = op2
-    while fraction > 1 {
-        fraction /= 10
-    }
-    return op1 + fraction
-}
-
 struct CalculatorBrain {
     
     private var accumulator: Double?
@@ -32,12 +24,13 @@ struct CalculatorBrain {
         "e": Operation.constant(M_E),
         "√": Operation.unaryOperation(sqrt),
         "cos": Operation.unaryOperation(cos),
+        "C" : Operation.constant(0),
+        "%" : Operation.unaryOperation({$0 / 100}),
         "±" : Operation.unaryOperation({ -$0 }),
         "+" : Operation.binaryOperation({ $0 + $1 }),
         "-" : Operation.binaryOperation({ $0 - $1 }),
         "×" : Operation.binaryOperation({ $0 * $1 }),
         "÷" : Operation.binaryOperation({ $0 / $1 }),
-        "." : Operation.binaryOperation(makeFlowtingNumber),
         "=" : Operation.equals
     ]
     

@@ -18,9 +18,15 @@ class ViewController: UIViewController {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTyping {
             let textCurrentlyInDisplay = display.text!
-            display.text = textCurrentlyInDisplay + digit
+            if !textCurrentlyInDisplay.contains(".") || digit != "." {
+                display.text = textCurrentlyInDisplay + digit
+            }
         } else {
-            display.text = digit
+            if (digit != ".") {
+                display.text = digit
+            } else {
+                display.text = "0."
+            }
             userIsInTheMiddleOfTyping = true
         }
     }
@@ -41,8 +47,8 @@ class ViewController: UIViewController {
             brain.setOperand(displayValue)
             userIsInTheMiddleOfTyping = false
         }
-        if let mathematicalSymobl = sender.currentTitle {
-            brain.performOperation(mathematicalSymobl)
+        if let mathematicalSymbol = sender.currentTitle {
+            brain.performOperation(mathematicalSymbol)
         }
         if let result = brain.result {
             displayValue = result
