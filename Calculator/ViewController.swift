@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
+    @IBOutlet weak var smallDisplay: UILabel!
     
     var userIsInTheMiddleOfTyping = false
     
@@ -29,11 +30,13 @@ class ViewController: UIViewController {
             }
             userIsInTheMiddleOfTyping = true
         }
+        
+       smallDisplayValue += (brain.resultIsPending ? "..." : " ")
     }
     
     var displayValue: Double {
         get {
-           return Double(display.text!)!
+            return Double(display.text!)!
         }
         set {
             display.text = String(newValue)
@@ -41,6 +44,15 @@ class ViewController: UIViewController {
     }
     
     private var brain = CalculatorBrain()
+    
+    private var smallDisplayValue: String {
+        get {
+            return brain.description
+        }
+        set {
+            smallDisplay.text = newValue
+        }
+    }
     
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInTheMiddleOfTyping {
@@ -53,6 +65,9 @@ class ViewController: UIViewController {
         if let result = brain.result {
             displayValue = result
         }
+
+        smallDisplayValue += (brain.resultIsPending ? "..." : "=")
+        
     }
 }
 
