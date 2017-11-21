@@ -31,7 +31,7 @@ class ViewController: UIViewController {
             userIsInTheMiddleOfTyping = true
         }
         
-       smallDisplayValue += (brain.resultIsPending ? "..." : " ")
+        updateSmallDisplay()
     }
     
     var displayValue: Double {
@@ -44,16 +44,7 @@ class ViewController: UIViewController {
     }
     
     private var brain = CalculatorBrain()
-    
-    private var smallDisplayValue: String {
-        get {
-            return brain.description
-        }
-        set {
-            smallDisplay.text = newValue
-        }
-    }
-    
+
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInTheMiddleOfTyping {
             brain.setOperand(displayValue)
@@ -66,8 +57,17 @@ class ViewController: UIViewController {
             displayValue = result
         }
 
-        smallDisplayValue += (brain.resultIsPending ? "..." : "=")
-        
+        updateSmallDisplay()
+    }
+    
+    func updateSmallDisplay() {
+        if !userIsInTheMiddleOfTyping {
+            if !brain.description.isEmpty {
+                smallDisplay.text = brain.description + (brain.resultIsPending ? "..." : "=")
+            } else {
+                smallDisplay.text = " "
+            }
+        }
     }
 }
 
