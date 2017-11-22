@@ -35,43 +35,44 @@ struct CalculatorBrain {
         "=" : Operation.equals
     ]
     
+    var addLastOperandToDescription = false
+    
     mutating func performOperation(_ symbol: String) {
         if let operation = operations[symbol] {
             switch operation {
             case .constant(let value):
-                if value != 0 {
-                    accumulator = value
-                    if !resultIsPending {
-                        description = symbol
-                    } else {
-                        description += String(symbol)
-                    }
-                } else {
-                    accumulator = 0
+                addLastOperandToDescription = true
+                accumulator = value
+                if value == 0 {
                     description = ""
                     pendingBinaryOperation = nil
+                } else {
+                    if resultIsPending {
+                        description += symbol
+                    } else {
+                        description = symbol
+                    }
                 }
                 
             case .unaryOperation(let function):
                 if accumulator != nil {
-                    if !resultIsPending {
-                        description = symbol + "(" + description + ")"
+                    addLastOperandToDescription = true
+                    if resultIsPending {
+                        description += "\(symbol)(\(accumulator!))"
                     } else {
-                        description += symbol + "(\(accumulator!))"
+                        description = "\(symbol)(\(description))"
                     }
-                   
                     accumulator = function(accumulator!)
                 }
                 
             case .binaryOperation(let function):
                 if accumulator != nil {
-                    performPendingBinaryOperation()
-                    if !resultIsPending {
-                        description = description + symbol
+                    addLastOperandToDescription = false
+                    if resultIsPending {
+                        performPendingBinaryOperation()
                     } else {
-                        description += "\(accumulator!)"
+                        description = "\(description)\(symbol)"
                     }
-                    
                     pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!)
                     
                     accumulator = nil
@@ -85,7 +86,9 @@ struct CalculatorBrain {
     
     private mutating func performPendingBinaryOperation() {
         if pendingBinaryOperation != nil && accumulator != nil {
-            description += "\(accumulator!)"
+            if (!addLastOperandToDescription) {
+                description += "\(accumulator!)"
+            }
             accumulator = pendingBinaryOperation?.perform(with: accumulator!)
             pendingBinaryOperation = nil
         }
